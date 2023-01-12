@@ -1,6 +1,30 @@
 
 version: 2.1
+
+commands:
+   # Exercise - Rollback
+   destroy_environment:
+     steps:
+       - run:
+           name: Destroy environment
+           when: on_fail
+           command: |
+             aws cloudformation delete-stack --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:7}
+# create stack CloudeFormation
 jobs:
+  create_infrastructure: 
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Create Cloudformation Stack
+          command: |
+            aws cloudformation deploy \
+              --template-file template.yml \
+              --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:7} \
+              --region us-east-1
+
   smoke_test:
     docker:
       - image: alpine:latest
@@ -17,7 +41,9 @@ jobs:
             else
               return 1
             fi
+      - destroy_environment 
 workflows:
   Test-workflow:
     jobs:
+      - create_infrastructure
       - smoke_test
