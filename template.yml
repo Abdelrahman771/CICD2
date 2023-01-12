@@ -7,9 +7,8 @@ Resources:
     Properties:
       SecurityGroups:
         - !Ref InstanceSecurityGroup
-    
       KeyName: saif
-      ImageId: 'ami-0b5eea76982371e91' 
+      ImageId: 'ami-0b5eea76982371e91 ' 
       InstanceType: t2.micro
   InstanceSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
